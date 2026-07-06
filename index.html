@@ -59,28 +59,28 @@
             </div>
             <div class="col-md-3">
               <label class="form-label">Agama</label>
-              <select class="form-select" id="formAgama" required></select>
+              <select class="form-select" id="formAgama"></select>
             </div>
             <div class="col-md-4">
               <label class="form-label">NIK (16 Digit)</label>
-              <input type="text" class="form-control" id="formNik" maxlength="16" required pattern="\d{16}">
+              <input type="text" class="form-control" id="formNik" maxlength="16" pattern="\d{16}">
             </div>
             <div class="col-md-4">
               <label class="form-label">Tempat Lahir</label>
-              <input type="text" class="form-control" id="formTempatLahir" required>
+              <input type="text" class="form-control" id="formTempatLahir">
             </div>
             <div class="col-md-4">
               <label class="form-label">Tanggal Lahir</label>
-              <input type="date" class="form-control" id="formTanggalLahir" required>
+              <input type="date" class="form-control" id="formTanggalLahir">
               <small id="infoTanggalTeks" class="text-success fw-bold d-block mt-1"></small>
             </div>
             <div class="col-md-6">
               <label class="form-label">No. Registrasi Akte Kelahiran</label>
-              <input type="text" class="form-control" id="formAkte" required>
+              <input type="text" class="form-control" id="formAkte">
             </div>
             <div class="col-md-6">
               <label class="form-label">Kebutuhan Khusus Murid</label>
-              <select class="form-select" id="formKebutuhan" required></select>
+              <select class="form-select" id="formKebutuhan"></select>
             </div>
           </div>
 
@@ -88,30 +88,30 @@
           <div class="row g-3">
             <div class="col-md-4">
               <label class="form-label">No Kartu Keluarga (KK)</label>
-              <input type="text" class="form-control" id="formKk" maxlength="16" required pattern="\d{16}">
+              <input type="text" class="form-control" id="formKk" maxlength="16" pattern="\d{16}">
             </div>
             <div class="col-md-4">
               <label class="form-label">Anak Ke-</label>
-              <input type="number" class="form-control" id="formAnakKe" required min="1">
+              <input type="number" class="form-control" id="formAnakKe" min="1">
             </div>
             <div class="col-md-4">
               <label class="form-label">Jumlah Saudara Kandung</label>
-              <input type="number" class="form-control" id="formJumlahSaudara" required min="0">
+              <input type="number" class="form-control" id="formJumlahSaudara" min="0">
             </div>
             <div class="col-md-4">
               <label class="form-label">Alat Transportasi ke Sekolah</label>
-              <select class="form-select" id="formTransportasi" required></select>
+              <select class="form-select" id="formTransportasi"></select>
             </div>
             <div class="col-md-4">
               <label class="form-label">Menerima KPS/PKH?</label>
-              <select class="form-select" id="formKps" required>
+              <select class="form-select" id="formKps">
                 <option value="TIDAK">TIDAK</option>
                 <option value="YA">YA</option>
               </select>
             </div>
             <div class="col-md-4">
               <label class="form-label">Memiliki Kartu Indonesia Pintar (KIP)?</label>
-              <select class="form-select" id="formKip" required>
+              <select class="form-select" id="formKip">
                 <option value="TIDAK">TIDAK</option>
                 <option value="YA">YA</option>
               </select>
@@ -122,49 +122,49 @@
           <div class="row g-3">
             <div class="col-md-4">
               <label class="form-label">Alamat Jalan / Kampung</label>
-              <input type="text" class="form-control" id="formAlamatJalan" required placeholder="Jl. Raya / Kampung...">
+              <input type="text" class="form-control" id="formAlamatJalan" placeholder="Jl. Raya / Kampung...">
             </div>
             <div class="col-md-2">
               <label class="form-label">RT</label>
-              <input type="text" class="form-control" id="formRt" required placeholder="001">
+              <input type="text" class="form-control" id="formRt" placeholder="001">
             </div>
             <div class="col-md-2">
               <label class="form-label">RW</label>
-              <input type="text" class="form-control" id="formRw" required placeholder="002">
+              <input type="text" class="form-control" id="formRw" placeholder="002">
             </div>
             <div class="col-md-4">
               <label class="form-label">Nama Dusun</label>
-              <input type="text" class="form-control" id="formDusun" required>
+              <input type="text" class="form-control" id="formDusun">
             </div>
             
             <div class="col-md-3">
               <label class="form-label">Provinsi</label>
-              <select class="form-select" id="formProvinsi" onchange="loadKabupaten()" required></select>
+              <select class="form-select" id="formProvinsi" onchange="loadKabupaten()"></select>
             </div>
             <div class="col-md-3">
               <label class="form-label">Kota / Kabupaten</label>
-              <select class="form-select" id="formKota" onchange="loadKecamatan()" required><option value="">Pilih...</option></select>
+              <select class="form-select" id="formKota" onchange="loadKecamatan()"><option value="">Pilih...</option></select>
             </div>
             <div class="col-md-3">
               <label class="form-label">Kecamatan</label>
-              <select class="form-select" id="formKecamatan" onchange="loadDesa()" required><option value="">Pilih...</option></select>
+              <select class="form-select" id="formKecamatan" onchange="loadDesa()"><option value="">Pilih...</option></select>
             </div>
             <div class="col-md-3">
               <label class="form-label">Desa / Kelurahan</label>
-              <select class="form-select" id="formDesa" required><option value="">Pilih...</option></select>
+              <select class="form-select" id="formDesa"><option value="">Pilih...</option></select>
             </div>
             
             <div class="col-md-3">
               <label class="form-label">Kode Pos</label>
-              <input type="text" class="form-control" id="formKodePos" required>
+              <input type="text" class="form-control" id="formKodePos">
             </div>
             <div class="col-md-4">
               <label class="form-label">Jenis Tempat Tinggal</label>
-              <select class="form-select" id="formJenisTinggal" required></select>
+              <select class="form-select" id="formJenisTinggal"></select>
             </div>
             <div class="col-md-5">
               <label class="form-label">Jarak ke Sekolah</label>
-              <select class="form-select" id="formJarakPilihan" onchange="toggleJarakInput()" required>
+              <select class="form-select" id="formJarakPilihan" onchange="toggleJarakInput()">
                 <option value="Kurang dari 1 KM">Kurang dari 1 KM</option>
                 <option value="Lebih dari 1 KM">Lebih dari 1 KM</option>
               </select>
@@ -176,9 +176,9 @@
             <div class="col-md-4">
               <label class="form-label">Waktu Tempuh</label>
               <div class="input-group">
-                <input type="number" class="form-control" id="waktuJam" placeholder="Jam" min="0" required>
+                <input type="number" class="form-control" id="waktuJam" placeholder="Jam" min="0">
                 <span class="input-group-text">Jam</span>
-                <input type="number" class="form-control" id="waktuMenit" placeholder="Menit" min="0" max="59" required>
+                <input type="number" class="form-control" id="waktuMenit" placeholder="Menit" min="0" max="59">
                 <span class="input-group-text">Menit</span>
               </div>
             </div>
@@ -187,8 +187,8 @@
               <label class="form-label fw-bold text-primary">Titik Koordinat Georeferensi</label>
               <button type="button" class="btn btn-sm btn-outline-primary float-end" onclick="getLocation()">Dapatkan Lokasi Otomatis</button>
               <div class="row g-2">
-                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formLintang" placeholder="Latitude / Lintang" required readonly></div>
-                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formBujur" placeholder="Longitude / Bujur" required readonly></div>
+                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formLintang" placeholder="Latitude / Lintang" readonly></div>
+                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formBujur" placeholder="Longitude / Bujur" readonly></div>
               </div>
               <div id="map"></div>
             </div>
@@ -197,29 +197,29 @@
           <div class="section-title">4. Data Orang Tua (Ayah & Ibu)</div>
           <div class="row g-3 card p-3 border-light-subtle bg-white mb-3 mx-0">
             <h6 class="fw-bold text-muted border-bottom pb-1">Identitas Ayah Kandung</h6>
-            <div class="col-md-4"><label class="form-label">Nama Lengkap Ayah</label><input type="text" class="form-control" id="formAyahNama" required></div>
-            <div class="col-md-4"><label class="form-label">NIK Ayah</label><input type="text" class="form-control" id="formAyahNik" maxlength="16" required pattern="\d{16}"></div>
-            <div class="col-md-4"><label class="form-label">Tahun Lahir Ayah</label><input type="number" class="form-control" id="formAyahTahun" min="1940" max="2020" required></div>
-            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formAyahPendidikan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formAyahPekerjaan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formAyahPenghasilan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formAyahKebutuhan" required></select></div>
+            <div class="col-md-4"><label class="form-label">Nama Lengkap Ayah</label><input type="text" class="form-control" id="formAyahNama"></div>
+            <div class="col-md-4"><label class="form-label">NIK Ayah</label><input type="text" class="form-control" id="formAyahNik" maxlength="16" pattern="\d{16}"></div>
+            <div class="col-md-4"><label class="form-label">Tahun Lahir Ayah</label><input type="number" class="form-control" id="formAyahTahun" min="1940" max="2026"></div>
+            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formAyahPendidikan"></select></div>
+            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formAyahPekerjaan"></select></div>
+            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formAyahPenghasilan"></select></div>
+            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formAyahKebutuhan"></select></div>
           </div>
 
           <div class="row g-3 card p-3 border-light-subtle bg-white mb-3 mx-0">
             <h6 class="fw-bold text-muted border-bottom pb-1">Identitas Ibu Kandung</h6>
-            <div class="col-md-4"><label class="form-label">Nama Lengkap Ibu</label><input type="text" class="form-control" id="formIbuNama" required></div>
-            <div class="col-md-4"><label class="form-label">NIK Ibu</label><input type="text" class="form-control" id="formIbuNik" maxlength="16" required pattern="\d{16}"></div>
-            <div class="col-md-4"><label class="form-label">Tahun Lahir Ibu</label><input type="number" class="form-control" id="formIbuTahun" min="1940" max="2020" required></div>
-            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formIbuPendidikan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formIbuPekerjaan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formIbuPenghasilan" required></select></div>
-            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formIbuKebutuhan" required></select></div>
+            <div class="col-md-4"><label class="form-label">Nama Lengkap Ibu</label><input type="text" class="form-control" id="formIbuNama"></div>
+            <div class="col-md-4"><label class="form-label">NIK Ibu</label><input type="text" class="form-control" id="formIbuNik" maxlength="16" pattern="\d{16}"></div>
+            <div class="col-md-4"><label class="form-label">Tahun Lahir Ibu</label><input type="number" class="form-control" id="formIbuTahun" min="1940" max="2026"></div>
+            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formIbuPendidikan"></select></div>
+            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formIbuPekerjaan"></select></div>
+            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formIbuPenghasilan"></select></div>
+            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formIbuKebutuhan"></select></div>
           </div>
 
           <div class="mb-3">
             <label class="form-label fw-bold text-danger">Apakah Murid Mempunyai Wali Asuh?</label>
-            <select class="form-select" id="formMempunyaiWali" onchange="toggleWaliSection()" required>
+            <select class="form-select" id="formMempunyaiWali" onchange="toggleWaliSection()">
               <option value="TIDAK">TIDAK (Hanya diampu Orang Tua)</option>
               <option value="YA">YA (Ada Wali Resmi)</option>
             </select>
@@ -243,7 +243,7 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Nomor HP / WhatsApp Utama</label>
-              <input type="text" class="form-control" id="formNoHp" required placeholder="08xxxxxxxxxx">
+              <input type="text" class="form-control" id="formNoHp" placeholder="08xxxxxxxxxx">
             </div>
             <div class="col-md-4">
               <label class="form-label">Alamat Email Aktif</label>
@@ -251,11 +251,11 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Hobi Aktivitas Murid</label>
-              <select class="form-select" id="formHobi" required></select>
+              <select class="form-select" id="formHobi"></select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Cita-cita Masa Depan</label>
-              <select class="form-select" id="formCitaCita" required></select>
+              <select class="form-select" id="formCitaCita"></select>
             </div>
           </div>
 
@@ -271,81 +271,60 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzB3NQtBewMIBKUGHFDgVSOExVZEVOg5DuWrEsctoctvNFXNk0tFSlqltUrctA4rvIP/exec";
 
     let map, marker;
-    let daftarWilayahMurni = [];
 
-    // Fungsi Pengolah Tanggal Lahir (M/d/yyyy ke yyyy-mm-dd) & Menampilkan Teks Panjang Indonesia
+    // Parser Konversi Tanggal dari Sheet (M/d/yyyy atau string lain) ke kotak Input HTML Date
     function parseTanggalKeForm(tglRaw) {
-  const inputDate = document.getElementById('formTanggalLahir');
-  
-  if (!tglRaw) {
-    inputDate.value = "";
-    return;
-  }
+      const inputDate = document.getElementById('formTanggalLahir');
+      if (!tglRaw) {
+        inputDate.value = "";
+        return;
+      }
 
-  // KONDISI 1: Jika data dari .gs masuk sebagai format "M/D/YYYY" (Contoh: "7/12/2019")
-  if (String(tglRaw).includes("/")) {
-    let parts = tglRaw.split("/"); // [Bulan, Tanggal, Tahun]
-    if (parts.length === 3) {
-      let monthNum = parseInt(parts[0], 10);
-      let dayNum   = parseInt(parts[1], 10);
-      let yearNum  = parseInt(parts[2], 10);
+      // Jika data dari sheet formatnya menggunakan "/" (M/d/yyyy)
+      if (String(tglRaw).includes("/")) {
+        let parts = tglRaw.split("/");
+        if (parts.length === 3) {
+          let monthString = String(parts[0]).padStart(2, '0');
+          let dayString   = String(parts[1]).padStart(2, '0');
+          let yearString  = parts[2];
+          inputDate.value = `${yearString}-${monthString}-${dayString}`;
+          return;
+        }
+      }
 
-      let dayString   = String(dayNum).padStart(2, '0');
-      let monthString = String(monthNum).padStart(2, '0');
-      
-      // Masukkan langsung ke dalam kotak input dengan format standar wajib (yyyy-mm-dd)
-      inputDate.value = `${yearNum}-${monthString}-${dayString}`;
-      return;
-    }
-  }
-
-  // KONDISI 2: Jika data dari .gs sudah berupa format "YYYY-MM-DD" atau "DD-MM-YYYY"
-  if (String(tglRaw).includes("-")) {
-    let parts = tglRaw.split("-");
-    // Jika ternyata formatnya dd-mm-yyyy (3 bagian terbalik)
-    if (parts.length === 3 && parts[0].length === 2) {
-      let dayString   = parts[0].padStart(2, '0');
-      let monthString = parts[1].padStart(2, '0');
-      let yearString  = parts[2];
-      inputDate.value = `${yearString}-${monthString}-${dayString}`;
-    } else {
-      // Jika sudah yyyy-mm-dd, langsung masukkan ke kotak input
+      // Jika data dari sheet formatnya menggunakan "-"
+      if (String(tglRaw).includes("-")) {
+        let parts = tglRaw.split("-");
+        if (parts.length === 3 && parts[0].length === 2) { // dd-mm-yyyy terbalik
+          inputDate.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        } else {
+          inputDate.value = tglRaw; // yyyy-mm-dd
+        }
+        return;
+      }
       inputDate.value = tglRaw;
     }
-    return;
-  }
-  
-  // Kondisi cadangan jika format teks lainnya
-  inputDate.value = tglRaw;
-}
 
-// Event Listener Saat Input Kalender Diubah Manual Oleh Murid
-document.getElementById('formTanggalLahir').addEventListener('change', function() {
-  const rawVal = this.value; // yyyy-mm-dd
-  const infoTeksBox = document.getElementById('infoTanggalTeks');
-  
-  // Pastikan elemen infoTanggalTeks ada di HTML sebelum mengubah teksnya
-  if (infoTeksBox && rawVal && rawVal.includes("-")) {
-    const parts = rawVal.split("-"); // [Tahun, Bulan, Tanggal]
-    const daftarBulan = [
-      "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
-    let mIdx = parseInt(parts[1], 10) - 1;
-    
-    // Menampilkan info teks hanya saat diubah manual oleh murid
-    infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
-  }
-});
+    // Teks Feedback berjalan saat diganti manual
+    document.getElementById('formTanggalLahir').addEventListener('change', function() {
+      const rawVal = this.value;
+      const infoTeksBox = document.getElementById('infoTanggalTeks');
+      if (infoTeksBox && rawVal && rawVal.includes("-")) {
+        const parts = rawVal.split("-");
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let mIdx = parseInt(parts[1], 10) - 1;
+        infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
+      }
+    });
 
-    // Inisialisasi Peta Default
+    // Inisialisasi Peta
     function initMap(lat = -6.12, lng = 106.15) {
       if (!map) {
         map = L.map('map').setView([lat, lng], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         marker = L.marker([lat, lng], {draggable: true}).addTo(map);
         
-        marker.on('dragend', function (e) {
+        marker.on('dragend', function () {
           document.getElementById('formLintang').value = marker.getLatLng().lat.toFixed(7);
           document.getElementById('formBujur').value = marker.getLatLng().lng.toFixed(7);
         });
@@ -361,7 +340,7 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(pos) {
           initMap(pos.coords.latitude, pos.coords.longitude);
-        }, function() { alert("Gagal mengambil lokasi otomatis, silakan geser marker manual."); });
+        }, function() { alert("Gagal mengambil lokasi secara otomatis."); });
       }
     }
 
@@ -370,61 +349,52 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
       const box = document.getElementById('jarakDetailBox');
       if(val === "Lebih dari 1 KM") {
         box.classList.remove('hidden');
-        document.getElementById('formJarakDetail').setAttribute('required', 'true');
       } else {
         box.classList.add('hidden');
-        document.getElementById('formJarakDetail').removeAttribute('required');
       }
     }
 
     function toggleWaliSection() {
       const status = document.getElementById('formMempunyaiWali').value;
       const sec = document.getElementById('waliSection');
-      const inputs = sec.querySelectorAll('input, select');
       if (status === "YA") {
         sec.classList.remove('hidden');
-        inputs.forEach(i => i.setAttribute('required', 'true'));
       } else {
         sec.classList.add('hidden');
-        inputs.forEach(i => i.removeAttribute('required'));
       }
     }
 
-    // IMPLEMENTASI CASCADING WILAYAH INDONESIA
+    // Cascading Dropdown Alamat Wilayah Indonesia (Fallback Input Text Jika Offline)
     async function loadProvinsi(currentProv = "", currentKota = "", currentKec = "", currentDesa = "") {
       try {
-        let res = await fetch("https://idn-area.v领.workers.dev/provinces"); // API Publik Gratis Wilayah Alternatif
+        let res = await fetch("https://idn-area.v领.workers.dev/provinces");
         if(!res.ok) throw new Error();
         let data = await res.json();
         let html = '<option value="">Pilih Provinsi...</option>';
         data.forEach(p => { html += `<option value="${p.name}" data-id="${p.id}">${p.name}</option>`; });
         document.getElementById('formProvinsi').innerHTML = html;
-        
         if(currentProv) {
           document.getElementById('formProvinsi').value = currentProv;
           await loadKabupaten(currentKota, currentKec, currentDesa);
         }
       } catch {
-        // Fallback jika API Wilayah Offline, ganti menjadi Input Text biasa
         ["formProvinsi", "formKota", "formKecamatan", "formDesa"].forEach(id => {
           let val = id === "formProvinsi" ? currentProv : id === "formKota" ? currentKota : id === "formKecamatan" ? currentKec : currentDesa;
-          document.getElementById(id).outerHTML = `<input type="text" class="form-control" id="${id}" value="${val}" required>`;
+          document.getElementById(id).outerHTML = `<input type="text" class="form-control" id="${id}" value="${val}">`;
         });
       }
     }
 
     async function loadKabupaten(targetKota = "", targetKec = "", targetDesa = "") {
       const provEl = document.getElementById('formProvinsi');
+      if(!provEl.options) return;
       const selected = provEl.options[provEl.selectedIndex];
       if(!selected || !selected.value) return;
-      const provId = selected.getAttribute('data-id');
-
-      let res = await fetch(`https://idn-area.v领.workers.dev/regencies/${provId}`);
+      let res = await fetch(`https://idn-area.v领.workers.dev/regencies/${selected.getAttribute('data-id')}`);
       let data = await res.json();
       let html = '<option value="">Pilih Kota/Kab...</option>';
       data.forEach(r => { html += `<option value="${r.name}" data-id="${r.id}">${r.name}</option>`; });
       document.getElementById('formKota').innerHTML = html;
-      
       if(targetKota) {
         document.getElementById('formKota').value = targetKota;
         await loadKecamatan(targetKec, targetDesa);
@@ -433,16 +403,14 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
 
     async function loadKecamatan(targetKec = "", targetDesa = "") {
       const kotaEl = document.getElementById('formKota');
+      if(!kotaEl.options) return;
       const selected = kotaEl.options[kotaEl.selectedIndex];
       if(!selected || !selected.value) return;
-      const kotaId = selected.getAttribute('data-id');
-
-      let res = await fetch(`https://idn-area.v领.workers.dev/districts/${kotaId}`);
+      let res = await fetch(`https://idn-area.v领.workers.dev/districts/${selected.getAttribute('data-id')}`);
       let data = await res.json();
       let html = '<option value="">Pilih Kecamatan...</option>';
       data.forEach(d => { html += `<option value="${d.name}" data-id="${d.id}">${d.name}</option>`; });
       document.getElementById('formKecamatan').innerHTML = html;
-
       if(targetKec) {
         document.getElementById('formKecamatan').value = targetKec;
         await loadDesa(targetDesa);
@@ -451,26 +419,25 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
 
     async function loadDesa(targetDesa = "") {
       const kecEl = document.getElementById('formKecamatan');
+      if(!kecEl.options) return;
       const selected = kecEl.options[kecEl.selectedIndex];
       if(!selected || !selected.value) return;
-      const kecId = selected.getAttribute('data-id');
-
-      let res = await fetch(`https://idn-area.v领.workers.dev/villages/${kecId}`);
+      let res = await fetch(`https://idn-area.v领.workers.dev/villages/${selected.getAttribute('data-id')}`);
       let data = await res.json();
       let html = '<option value="">Pilih Desa/Kelurahan...</option>';
       data.forEach(v => { html += `<option value="${v.name}">${v.name}</option>`; });
       document.getElementById('formDesa').innerHTML = html;
-
       if(targetDesa) document.getElementById('formDesa').value = targetDesa;
     }
 
-    // Handler Login Sistem
+    // Logic Submit Login NIS
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const nis = document.getElementById('nisInput').value;
       const btn = document.getElementById('btnLogin');
       const alertBox = document.getElementById('loginAlert');
       btn.disabled = true; btn.innerText = "Mencari Data...";
+      alertBox.classList.add('hidden');
 
       fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'login', nis: nis }) })
       .then(res => res.json())
@@ -482,32 +449,30 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
           
           const d = res.data;
           document.getElementById('studentRow').value = d.row;
-          document.getElementById('formNama').value = d.nama;
-          document.getElementById('formJk').value = d.jk;
-          document.getElementById('formNik').value = d.nik;
-          document.getElementById('formKk').value = d.kk;
-          document.getElementById('formTempatLahir').value = d.tempatLahir;
-          document.getElementById('formAkte').value = d.noAkte;
-          document.getElementById('formAnakKe').value = d.anakKe;
-          document.getElementById('formJumlahSaudara').value = d.jumlahSaudara;
+          document.getElementById('formNama').value = d.nama || "";
+          document.getElementById('formJk').value = d.jk || "L";
+          document.getElementById('formNik').value = d.nik || "";
+          document.getElementById('formKk').value = d.kk || "";
+          document.getElementById('formTempatLahir').value = d.tempatLahir || "";
+          document.getElementById('formAkte').value = d.noAkte || "";
+          document.getElementById('formAnakKe').value = d.anakKe || "";
+          document.getElementById('formJumlahSaudara').value = d.jumlahSaudara || "";
           document.getElementById('formKps').value = d.kps || "TIDAK";
           document.getElementById('formKip').value = d.kip || "TIDAK";
-          document.getElementById('formAlamatJalan').value = d.alamatJalan;
-          document.getElementById('formRt').value = d.rt;
-          document.getElementById('formRw').value = d.rw;
-          document.getElementById('formDusun').value = d.dusun;
-          document.getElementById('formKodePos').value = d.kodePos;
+          document.getElementById('formAlamatJalan').value = d.alamatJalan || "";
+          document.getElementById('formRt').value = d.rt || "";
+          document.getElementById('formRw').value = d.rw || "";
+          document.getElementById('formDusun').value = d.dusun || "";
+          document.getElementById('formKodePos').value = d.kodePos || "";
           
-          // Jalankan pengolahan konversi tanggal lahir
           parseTanggalKeForm(d.tanggalLahir);
 
           if(d.waktuTempuh && String(d.waktuTempuh).includes("Jam")) {
             let parts = String(d.waktuTempuh).split(" ");
-            document.getElementById('waktuJam').value = parts[0] || 0;
-            document.getElementById('waktuMenit').value = parts[2] || 0;
+            document.getElementById('waktuJam').value = parts[0] || "";
+            document.getElementById('waktuMenit').value = parts[2] || "";
           } else {
-            document.getElementById('waktuMenit').value = d.waktuTempuh || 0;
-            document.getElementById('waktuJam').value = 0;
+            document.getElementById('waktuMenit').value = d.waktuTempuh || "";
           }
 
           if (d.jarakSekolah && String(d.jarakSekolah).includes("Lebih")) {
@@ -518,13 +483,12 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
             document.getElementById('formJarakPilihan').value = d.jarakSekolah || "Kurang dari 1 KM";
           }
 
-          document.getElementById('formAyahNama').value = d.namaAyah;
-          document.getElementById('formAyahNik').value = d.ayahNik;
-          document.getElementById('formAyahTahun').value = d.ayahTahun;
-          document.getElementById('formIbuNama').value = d.namaIbu;
-          document.getElementById('formIbuNik').value = d.ibuNik;
-          document.getElementById('formIbuTahun').value = d.ibuTahun;
-          
+          document.getElementById('formAyahNama').value = d.namaAyah || "";
+          document.getElementById('formAyahNik').value = d.ayahNik || "";
+          document.getElementById('formAyahTahun').value = d.ayahTahun || "";
+          document.getElementById('formIbuNama').value = d.namaIbu || "";
+          document.getElementById('formIbuNik').value = d.ibuNik || "";
+          document.getElementById('formIbuTahun').value = d.ibuTahun || "";
           document.getElementById('formMempunyaiWali').value = d.mempunyaiWali || "TIDAK";
           document.getElementById('formWaliNama').value = d.namaWali || "";
           document.getElementById('formWaliNik').value = d.waliNik || "";
@@ -532,11 +496,13 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
           toggleWaliSection();
 
           document.getElementById('formTelpRumah').value = d.telpRumah || "";
-          document.getElementById('formNoHp').value = d.noHp;
-          document.getElementById('formEmail').value = d.email;
+          document.getElementById('formNoHp').value = d.noHp || "";
+          document.getElementById('formEmail').value = d.email || "";
 
+          // Populate drop-down dari data opsi
           const fillSelect = (id, options, currentVal) => {
             let el = document.getElementById(id);
+            if(!el) return;
             el.innerHTML = '<option value="">Pilih...</option>';
             options.forEach(o => { el.innerHTML += `<option value="${o}" ${o===currentVal?'selected':''}>${o}</option>`; });
           };
@@ -547,17 +513,14 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
           fillSelect('formJenisTinggal', res.opsi.jenisTinggal, d.jenisTinggal);
           fillSelect('formHobi', res.opsi.hobi, d.hobi);
           fillSelect('formCitaCita', res.opsi.citaCita, d.citaCita);
-          
           fillSelect('formAyahPendidikan', res.opsi.pendidikan, d.ayahPendidikan);
           fillSelect('formAyahPekerjaan', res.opsi.pekerjaan, d.ayahPekerjaan);
           fillSelect('formAyahPenghasilan', res.opsi.penghasilan, d.ayahPenghasilan);
           fillSelect('formAyahKebutuhan', res.opsi.kebutuhan, d.ayahKebutuhan);
-
           fillSelect('formIbuPendidikan', res.opsi.pendidikan, d.ibuPendidikan);
           fillSelect('formIbuPekerjaan', res.opsi.pekerjaan, d.ibuPekerjaan);
           fillSelect('formIbuPenghasilan', res.opsi.penghasilan, d.ibuPenghasilan);
           fillSelect('formIbuKebutuhan', res.opsi.kebutuhan, d.ibuKebutuhan);
-
           fillSelect('formWaliPendidikan', res.opsi.pendidikan, d.waliPendidikan);
           fillSelect('formWaliPekerjaan', res.opsi.pekerjaan, d.waliPekerjaan);
           fillSelect('formWaliPenghasilan', res.opsi.penghasilan, d.waliPenghasilan);
@@ -566,15 +529,14 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
           let centerLng = parseFloat(d.bujur) || 106.15;
           setTimeout(() => { initMap(centerLat, centerLng); }, 300);
 
-          // Panggil fungsi pembuat wilayah bertingkat
           loadProvinsi(d.provinsi, d.kota, d.kecamatan, d.desa);
         } else {
           alertBox.innerText = res.message; alertBox.classList.remove('hidden');
         }
-      }).catch(() => { btn.disabled = false; alert("Kendala Jaringan Web App."); });
+      }).catch(() => { btn.disabled = false; alert("Gagal terhubung ke Web App server."); });
     });
 
-    // Handler Kirim Update Data
+    // Logic Kirim Update Perbaikan Data
     document.getElementById('siswaForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSimpan');
@@ -583,20 +545,15 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
       let jarakFinal = document.getElementById('formJarakPilihan').value;
       if(jarakFinal === "Lebih dari 1 KM") jarakFinal = document.getElementById('formJarakDetail').value;
 
-      let waktuFinal = document.getElementById('waktuJam').value + " Jam " + document.getElementById('waktuMenit').value + " Menit";
+      let waktuJamVal = document.getElementById('waktuJam').value;
+      let waktuMenitVal = document.getElementById('waktuMenit').value;
+      let waktuFinal = (waktuJamVal || "0") + " Jam " + (waktuMenitVal || "0") + " Menit";
 
-      // Kembalikan format tanggal ke Bulan/Tanggal/Tahun (M/d/yyyy) sesuai kebutuhan Google Sheets
-      const rawDate = document.getElementById('formTanggalLahir').value; // yyyy-mm-dd
+      const rawDate = document.getElementById('formTanggalLahir').value;
       let dateForSheets = rawDate;
-
       if (rawDate && rawDate.includes("-")) {
-        const parts = rawDate.split("-"); // [yyyy, mm, dd]
-        if (parts.length === 3) {
-          let y = parts[0];
-          let m = parseInt(parts[1], 10); // Hilangkan angka nol di depan (08 -> 8)
-          let d = parseInt(parts[2], 10);
-          dateForSheets = `${m}/${d}/${y}`;
-        }
+        const parts = rawDate.split("-");
+        dateForSheets = `${parseInt(parts[1], 10)}/${parseInt(parts[2], 10)}/${parts[0]}`; // Dikembalikan M/d/yyyy
       }
 
       const payload = {
@@ -607,7 +564,7 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
         nik: document.getElementById('formNik').value,
         kk: document.getElementById('formKk').value,
         tempatLahir: document.getElementById('formTempatLahir').value,
-        tanggalLahir: dateForSheets, // Mengirim format string M/d/yyyy
+        tanggalLahir: dateForSheets,
         noAkte: document.getElementById('formAkte').value,
         kebutuhanKhusus: document.getElementById('formKebutuhan').value,
         agama: document.getElementById('formAgama').value,
@@ -669,7 +626,7 @@ document.getElementById('formTanggalLahir').addEventListener('change', function(
         const fa = document.getElementById('formAlert');
         fa.className = "alert alert-success"; fa.innerText = res.message;
         fa.classList.remove('hidden'); window.scrollTo(0, 0);
-      });
+      }).catch(() => { btn.disabled = false; alert("Gagal menyimpan data."); });
     });
 
     function logout() { location.reload(); }
