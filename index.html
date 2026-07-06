@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Pemutakhiran Data Murid Mandiri</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { background-color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+    .card-auth { max-width: 420px; margin: 80px auto; border-radius: 12px; }
+    .hidden { display: none; }
+    .section-title { background-color: #e2e8f0; color: #1e293b; padding: 8px 12px; font-weight: 600; border-radius: 6px; margin-top: 25px; margin-bottom: 15px; }
+    #map { height: 250px; border-radius: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="container my-4">
+    <div id="loginSection" class="card card-auth shadow-sm border-0">
+      <div class="card-header bg-primary text-white text-center py-3 border-0" style="border-radius: 12px 12px 0 0;">
+        <h5 class="mb-0 fw-bold">SI-DATA MURID</h5>
+        <small class="text-white-50">Masukkan NIS untuk Memulai Pemutakhiran</small>
+      </div>
+      <div class="card-body p-4">
+        <div id="loginAlert" class="alert alert-danger hidden"></div>
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="nisInput" class="form-label fw-medium">Nomor NIS Murid</label>
+            <input type="text" class="form-control form-control-lg text-center" id="nisInput" required placeholder="Contoh: 2526001">
+          </div>
+          <button type="submit" id="btnLogin" class="btn btn-primary btn-lg w-100">Masuk Sistem</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="formSection" class="card shadow-sm border-0 hidden">
+      <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold">Formulir Konfirmasi & Perbaikan Data</h5>
+        <button class="btn btn-sm btn-outline-danger" onclick="logout()">Keluar Aplikasi</button>
+      </div>
+      <div class="card-body p-4">
+        <div id="formAlert" class="alert hidden"></div>
+        <form id="siswaForm">
+          <input type="hidden" id="studentRow">
+
+          <div class="section-title">1. Data Pribadi Murid</div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nama Lengkap Murid</label>
+              <input type="text" class="form-control" id="formNama" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Jenis Kelamin</label>
+              <select class="form-select" id="formJk" required>
+                <option value="L">Laki-laki (L)</option>
+                <option value="P">Perempuan (P)</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Agama</label>
+              <select class="form-select" id="formAgama" required></select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">NIK (16 Digit)</label>
+              <input type="text" class="form-control" id="formNik" maxlength="16" required pattern="\d{16}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Tempat Lahir</label>
+              <input type="text" class="form-control" id="formTempatLahir" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Tanggal Lahir (DD-MM-YYYY)</label>
+              <input type="text" class="form-control" id="formTanggalLahir" placeholder="Contoh: 09-08-2016" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">No. Registrasi Akte Kelahiran</label>
+              <input type="text" class="form-control" id="formAkte" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Kebutuhan Khusus Murid</label>
+              <select class="form-select" id="formKebutuhan" required></select>
+            </div>
+          </div>
+
+          <div class="section-title">2. Data Keluarga & Keadaan Berkas</div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">No Kartu Keluarga (KK)</label>
+              <input type="text" class="form-control" id="formKk" maxlength="16" required pattern="\d{16}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Anak Ke-</label>
+              <input type="number" class="form-control" id="formAnakKe" required min="1">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Jumlah Saudara Kandung</label>
+              <input type="number" class="form-control" id="formJumlahSaudara" required min="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Alat Transportasi ke Sekolah</label>
+              <select class="form-select" id="formTransportasi" required></select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Menerima KPS/PKH?</label>
+              <select class="form-select" id="formKps" required>
+                <option value="TIDAK">TIDAK</option>
+                <option value="YA">YA</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Memiliki Kartu Indonesia Pintar (KIP)?</label>
+              <select class="form-select" id="formKip" required>
+                <option value="TIDAK">TIDAK</option>
+                <option value="YA">YA</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-title">3. Data Alamat Domisili</div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Alamat Jalan / Kampung</label>
+              <input type="text" class="form-control" id="formAlamatJalan" required placeholder="Jl. Raya / Kampung...">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">RT</label>
+              <input type="text" class="form-control" id="formRt" required placeholder="001">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">RW</label>
+              <input type="text" class="form-control" id="formRw" required placeholder="002">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nama Dusun</label>
+              <input type="text" class="form-control" id="formDusun" required>
+            </div>
+            
+            <div class="col-md-3">
+              <label class="form-label">Provinsi</label>
+              <select class="form-select" id="formProvinsi" onchange="loadKabupaten()" required></select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Kota / Kabupaten</label>
+              <select class="form-select" id="formKota" onchange="loadKecamatan()" required><option value="">Pilih...</option></select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Kecamatan</label>
+              <select class="form-select" id="formKecamatan" onchange="loadDesa()" required><option value="">Pilih...</option></select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Desa / Kelurahan</label>
+              <select class="form-select" id="formDesa" required><option value="">Pilih...</option></select>
+            </div>
+            
+            <div class="col-md-3">
+              <label class="form-label">Kode Pos</label>
+              <input type="text" class="form-control" id="formKodePos" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Jenis Tempat Tinggal</label>
+              <select class="form-select" id="formJenisTinggal" required></select>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Jarak ke Sekolah</label>
+              <select class="form-select" id="formJarakPilihan" onchange="toggleJarakInput()" required>
+                <option value="Kurang dari 1 KM">Kurang dari 1 KM</option>
+                <option value="Lebih dari 1 KM">Lebih dari 1 KM</option>
+              </select>
+              <div id="jarakDetailBox" class="mt-2 hidden">
+                <input type="text" class="form-control" id="formJarakDetail" placeholder="Sebutkan dalam KM, misal: 3.5 KM">
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <label class="form-label">Waktu Tempuh</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="waktuJam" placeholder="Jam" min="0" required>
+                <span class="input-group-text">Jam</span>
+                <input type="number" class="form-control" id="waktuMenit" placeholder="Menit" min="0" max="59" required>
+                <span class="input-group-text">Menit</span>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <label class="form-label fw-bold text-primary">Titik Koordinat Georeferensi</label>
+              <button type="button" class="btn btn-sm btn-outline-primary float-end" onclick="getLocation()">Dapatkan Lokasi Otomatis</button>
+              <div class="row g-2">
+                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formLintang" placeholder="Latitude / Lintang" required readonly></div>
+                <div class="col-6"><input type="text" class="form-control form-control-sm" id="formBujur" placeholder="Longitude / Bujur" required readonly></div>
+              </div>
+              <div id="map"></div>
+            </div>
+          </div>
+
+          <div class="section-title">4. Data Orang Tua (Ayah & Ibu)</div>
+          <div class="row g-3 card p-3 border-light-subtle bg-white mb-3 mx-0">
+            <h6 class="fw-bold text-muted border-bottom pb-1">Identitas Ayah Kandung</h6>
+            <div class="col-md-4"><label class="form-label">Nama Lengkap Ayah</label><input type="text" class="form-control" id="formAyahNama" required></div>
+            <div class="col-md-4"><label class="form-label">NIK Ayah</label><input type="text" class="form-control" id="formAyahNik" maxlength="16" required pattern="\d{16}"></div>
+            <div class="col-md-4"><label class="form-label">Tahun Lahir Ayah</label><input type="number" class="form-control" id="formAyahTahun" min="1940" max="2020" required></div>
+            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formAyahPendidikan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formAyahPekerjaan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formAyahPenghasilan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formAyahKebutuhan" required></select></div>
+          </div>
+
+          <div class="row g-3 card p-3 border-light-subtle bg-white mb-3 mx-0">
+            <h6 class="fw-bold text-muted border-bottom pb-1">Identitas Ibu Kandung</h6>
+            <div class="col-md-4"><label class="form-label">Nama Lengkap Ibu</label><input type="text" class="form-control" id="formIbuNama" required></div>
+            <div class="col-md-4"><label class="form-label">NIK Ibu</label><input type="text" class="form-control" id="formIbuNik" maxlength="16" required pattern="\d{16}"></div>
+            <div class="col-md-4"><label class="form-label">Tahun Lahir Ibu</label><input type="number" class="form-control" id="formIbuTahun" min="1940" max="2020" required></div>
+            <div class="col-md-3"><label class="form-label">Pendidikan</label><select class="form-select" id="formIbuPendidikan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Pekerjaan</label><select class="form-select" id="formIbuPekerjaan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Penghasilan Bulanan</label><select class="form-select" id="formIbuPenghasilan" required></select></div>
+            <div class="col-md-3"><label class="form-label">Kebutuhan Khusus</label><select class="form-select" id="formIbuKebutuhan" required></select></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-danger">Apakah Murid Mempunyai Wali Asuh?</label>
+            <select class="form-select" id="formMempunyaiWali" onchange="toggleWaliSection()" required>
+              <option value="TIDAK">TIDAK (Hanya diampu Orang Tua)</option>
+              <option value="YA">YA (Ada Wali Resmi)</option>
+            </select>
+          </div>
+
+          <div id="waliSection" class="row g-3 card p-3 border-danger-subtle bg-light mb-3 mx-0 hidden">
+            <h6 class="fw-bold text-danger border-bottom pb-1">Identitas Wali Siswa</h6>
+            <div class="col-md-4"><label class="form-label">Nama Lengkap Wali</label><input type="text" class="form-control" id="formWaliNama"></div>
+            <div class="col-md-4"><label class="form-label">NIK Wali</label><input type="text" class="form-control" id="formWaliNik" maxlength="16"></div>
+            <div class="col-md-4"><label class="form-label">Tahun Lahir Wali</label><input type="number" class="form-control" id="formWaliTahun"></div>
+            <div class="col-md-4"><label class="form-label">Pendidikan Wali</label><select class="form-select" id="formWaliPendidikan"></select></div>
+            <div class="col-md-4"><label class="form-label">Pekerjaan Wali</label><select class="form-select" id="formWaliPekerjaan"></select></div>
+            <div class="col-md-4"><label class="form-label">Penghasilan Wali</label><select class="form-select" id="formWaliPenghasilan"></select></div>
+          </div>
+
+          <div class="section-title">5. Data Kontak & Khusus</div>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Nomor Telepon Rumah</label>
+              <input type="text" class="form-control" id="formTelpRumah" placeholder="021xxxx (Bisa dikosongi)">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Nomor HP / WhatsApp Utama</label>
+              <input type="text" class="form-control" id="formNoHp" required placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Alamat Email Aktif</label>
+              <input type="email" class="form-control" id="formEmail" placeholder="nama@gmail.com">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hobi Aktivitas Murid</label>
+              <select class="form-select" id="formHobi" required></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Cita-cita Masa Depan</label>
+              <select class="form-select" id="formCitaCita" required></select>
+            </div>
+          </div>
+
+          <hr class="my-4">
+          <button type="submit" id="btnSimpan" class="btn btn-success btn-lg w-100">Kirim & Perbarui Database Sekolah</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // GANTI DENGAN URL WEB APP DEPLOYMENT GOOGLE APPS SCRIPT ANDA
+    const WEB_APP_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA";
+
+    let map, marker;
+    let localWilayah = {};
+
+    // Inisialisasi Peta Default (Posisi Default Serang, Banten)
+    function initMap(lat = -6.12, lng = 106.15) {
+      if (!map) {
+        map = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+        
+        marker.on('dragend', function (e) {
+          document.getElementById('formLintang').value = marker.getLatLng().lat.toFixed(7);
+          document.getElementById('formBujur').value = marker.getLatLng().lng.toFixed(7);
+        });
+      } else {
+        map.setView([lat, lng], 13);
+        marker.setLatLng([lat, lng]);
+      }
+      document.getElementById('formLintang').value = lat;
+      document.getElementById('formBujur').value = lng;
+    }
+
+    // Geolocation API Browser Otomatis
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          initMap(pos.coords.latitude, pos.coords.longitude);
+        }, function() { alert("Gagal mengambil lokasi otomatis, silakan geser marker manual."); });
+      }
+    }
+
+    // Pemilihan Jarak Kondisional
+    function toggleJarakInput() {
+      const val = document.getElementById('formJarakPilihan').value;
+      const box = document.getElementById('jarakDetailBox');
+      if(val === "Lebih dari 1 KM") {
+        box.classList.remove('hidden');
+        document.getElementById('formJarakDetail').setAttribute('required', 'true');
+      } else {
+        box.classList.add('hidden');
+        document.getElementById('formJarakDetail').removeAttribute('required');
+      }
+    }
+
+    // Kondisional Form Data Wali
+    function toggleWaliSection() {
+      const status = document.getElementById('formMempunyaiWali').value;
+      const sec = document.getElementById('waliSection');
+      const inputs = sec.querySelectorAll('input, select');
+      if (status === "YA") {
+        sec.classList.remove('hidden');
+        inputs.forEach(i => i.setAttribute('required', 'true'));
+      } else {
+        sec.classList.add('hidden');
+        inputs.forEach(i => i.removeAttribute('required'));
+      }
+    }
+
+    // FETCH API Wilayah Indonesia Publik Bebas Biaya
+    async function loadProvinsi(currentProv = "") {
+      try {
+        let res = await fetch("https://status.dapodik.co/api/wilayah/provinsi"); // Contoh endpoint publik handal / alternatif binderbyte/kodewilayah
+        if(!res.ok) throw new Error();
+        let data = await res.json();
+        let html = '<option value="">Pilih Provinsi...</option>';
+        data.forEach(p => { html += `<option value="${p.nama}" data-id="${p.id}">${p.nama}</option>`; });
+        document.getElementById('formProvinsi').innerHTML = html;
+        if(currentProv) document.getElementById('formProvinsi').value = currentProv;
+      } catch {
+        // Fallback jika API Wilayah offline, diubah jadi text input biasa secara dinamis
+        document.getElementById('formProvinsi').outerHTML = `<input type="text" class="form-control" id="formProvinsi" value="${currentProv}" required>`;
+      }
+    }
+
+    // Logic Login & Tarik Opsi Dropdown Dinamis
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nis = document.getElementById('nisInput').value;
+      const btn = document.getElementById('btnLogin');
+      const alertBox = document.getElementById('loginAlert');
+      btn.disabled = true; btn.innerText = "Mencari Data...";
+
+      fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'login', nis: nis }) })
+      .then(res => res.json())
+      .then(res => {
+        btn.disabled = false; btn.innerText = "Masuk Sistem";
+        if (res.status === "success") {
+          document.getElementById('loginSection').classList.add('hidden');
+          document.getElementById('formSection').classList.remove('hidden');
+          
+          // Mengisi semua parameter element form
+          const d = res.data;
+          document.getElementById('studentRow').value = d.row;
+          document.getElementById('formNama').value = d.nama;
+          document.getElementById('formJk').value = d.jk;
+          document.getElementById('formNik').value = d.nik;
+          document.getElementById('formKk').value = d.kk;
+          document.getElementById('formTempatLahir').value = d.tempatLahir;
+          document.getElementById('formTanggalLahir').value = d.tanggalLahir;
+          document.getElementById('formAkte').value = d.noAkte;
+          document.getElementById('formAnakKe').value = d.anakKe;
+          document.getElementById('formJumlahSaudara').value = d.jumlahSaudara;
+          document.getElementById('formKps').value = d.kps || "TIDAK";
+          document.getElementById('formKip').value = d.kip || "TIDAK";
+          document.getElementById('formAlamatJalan').value = d.alamatJalan;
+          document.getElementById('formRt').value = d.rt;
+          document.getElementById('formRw').value = d.rw;
+          document.getElementById('formDusun').value = d.dusun;
+          document.getElementById('formKodePos').value = d.kodePos;
+          
+          // Olah Waktu Tempuh Terpisah (Jam/Menit)
+          if(d.waktuTempuh && String(d.waktuTempuh).includes("Jam")) {
+            let parts = String(d.waktuTempuh).split(" ");
+            document.getElementById('waktuJam').value = parts[0] || 0;
+            document.getElementById('waktuMenit').value = parts[2] || 0;
+          } else {
+            document.getElementById('waktuMenit').value = d.waktuTempuh || 0;
+            document.getElementById('waktuJam').value = 0;
+          }
+
+          // Olah Jarak Sekolah
+          if (d.jarakSekolah && String(d.jarakSekolah).includes("Lebih")) {
+            document.getElementById('formJarakPilihan').value = "Lebih dari 1 KM";
+            document.getElementById('jarakDetailBox').classList.remove('hidden');
+            document.getElementById('formJarakDetail').value = d.jarakSekolah;
+          } else {
+            document.getElementById('formJarakPilihan').value = d.jarakSekolah || "Kurang dari 1 KM";
+          }
+
+          // Orang Tua Ayah & Ibu & Wali
+          document.getElementById('formAyahNama').value = d.namaAyah;
+          document.getElementById('formAyahNik').value = d.ayahNik;
+          document.getElementById('formAyahTahun').value = d.ayahTahun;
+          document.getElementById('formIbuNama').value = d.namaIbu;
+          document.getElementById('formIbuNik').value = d.ibuNik;
+          document.getElementById('formIbuTahun').value = d.ibuTahun;
+          
+          document.getElementById('formMempunyaiWali').value = d.mempunyaiWali || "TIDAK";
+          document.getElementById('formWaliNama').value = d.namaWali || "";
+          document.getElementById('formWaliNik').value = d.waliNik || "";
+          document.getElementById('formWaliTahun').value = d.waliTahun || "";
+          toggleWaliSection();
+
+          document.getElementById('formTelpRumah').value = d.telpRumah || "";
+          document.getElementById('formNoHp').value = d.noHp;
+          document.getElementById('formEmail').value = d.email;
+
+          // Isi Semua Dropdown dari Sheet DATA OPSI
+          const fillSelect = (id, options, currentVal) => {
+            let el = document.getElementById(id);
+            el.innerHTML = '<option value="">Pilih...</option>';
+            options.forEach(o => { el.innerHTML += `<option value="${o}" ${o===currentVal?'selected':''}>${o}</option>`; });
+          };
+
+          fillSelect('formAgama', res.opsi.agama, d.agama);
+          fillSelect('formKebutuhan', res.opsi.kebutuhan, d.kebutuhanKhusus);
+          fillSelect('formTransportasi', res.opsi.transportasi, d.transportasi);
+          fillSelect('formJenisTinggal', res.opsi.jenisTinggal, d.jenisTinggal);
+          fillSelect('formHobi', res.opsi.hobi, d.hobi);
+          fillSelect('formCitaCita', res.opsi.citaCita, d.citaCita);
+          
+          // Dropdown Ayah
+          fillSelect('formAyahPendidikan', res.opsi.pendidikan, d.ayahPendidikan);
+          fillSelect('formAyahPekerjaan', res.opsi.pekerjaan, d.ayahPekerjaan);
+          fillSelect('formAyahPenghasilan', res.opsi.penghasilan, d.ayahPenghasilan);
+          fillSelect('formAyahKebutuhan', res.opsi.kebutuhan, d.ayahKebutuhan);
+
+          // Dropdown Ibu
+          fillSelect('formIbuPendidikan', res.opsi.pendidikan, d.ibuPendidikan);
+          fillSelect('formIbuPekerjaan', res.opsi.pekerjaan, d.ibuPekerjaan);
+          fillSelect('formIbuPenghasilan', res.opsi.penghasilan, d.ibuPenghasilan);
+          fillSelect('formIbuKebutuhan', res.opsi.kebutuhan, d.ibuKebutuhan);
+
+          // Dropdown Wali
+          fillSelect('formWaliPendidikan', res.opsi.pendidikan, d.waliPendidikan);
+          fillSelect('formWaliPekerjaan', res.opsi.pekerjaan, d.waliPekerjaan);
+          fillSelect('formWaliPenghasilan', res.opsi.penghasilan, d.waliPenghasilan);
+
+          // Peta Muat Koordinat
+          let centerLat = parseFloat(d.lintang) || -6.12;
+          let centerLng = parseFloat(d.bujur) || 106.15;
+          setTimeout(() => { initMap(centerLat, centerLng); }, 300);
+
+          // Muat data wilayah
+          loadProvinsi(d.provinsi);
+        } else {
+          alertBox.innerText = res.message; alertBox.classList.remove('hidden');
+        }
+      }).catch(() => { btn.disabled = false; alert("Kendala Jaringan Web App."); });
+    });
+
+    // KIRIM UPDATE DATA
+    document.getElementById('siswaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSimpan');
+      btn.disabled = true; btn.innerText = "Menyimpan ke Sheet...";
+
+      // Kembalikan susunan text waktu tempuh dan jarak sekolah
+      let jarakFinal = document.getElementById('formJarakPilihan').value;
+      if(jarakFinal === "Lebih dari 1 KM") jarakFinal = document.getElementById('formJarakDetail').value;
+
+      let waktuFinal = document.getElementById('waktuJam').value + " Jam " + document.getElementById('waktuMenit').value + " Menit";
+
+      const payload = {
+        action: 'update',
+        row: document.getElementById('studentRow').value,
+        nama: document.getElementById('formNama').value,
+        jk: document.getElementById('formJk').value,
+        nik: document.getElementById('formNik').value,
+        kk: document.getElementById('formKk').value,
+        tempatLahir: document.getElementById('formTempatLahir').value,
+        tanggalLahir: document.getElementById('formTanggalLahir').value,
+        noAkte: document.getElementById('formAkte').value,
+        kebutuhanKhusus: document.getElementById('formKebutuhan').value,
+        agama: document.getElementById('formAgama').value,
+        anakKe: document.getElementById('formAnakKe').value,
+        jumlahSaudara: document.getElementById('formJumlahSaudara').value,
+        transportasi: document.getElementById('formTransportasi').value,
+        kps: document.getElementById('formKps').value,
+        kip: document.getElementById('formKip').value,
+        alamatJalan: document.getElementById('formAlamatJalan').value,
+        rt: document.getElementById('formRt').value,
+        rw: document.getElementById('formRw').value,
+        dusun: document.getElementById('formDusun').value,
+        provinsi: document.getElementById('formProvinsi').value,
+        kota: document.getElementById('formKota').value || "",
+        kecamatan: document.getElementById('formKecamatan').value || "",
+        desa: document.getElementById('formDesa').value || "",
+        kodePos: document.getElementById('formKodePos').value,
+        jenisTinggal: document.getElementById('formJenisTinggal').value,
+        jarakSekolah: jarakFinal,
+        waktuTempuh: waktuFinal,
+        lintang: document.getElementById('formLintang').value,
+        bujur: document.getElementById('formBujur').value,
+        
+        // Orang Tua
+        namaAyah: document.getElementById('formAyahNama').value,
+        ayahNik: document.getElementById('formAyahNik').value,
+        ayahTahun: document.getElementById('formAyahTahun').value,
+        ayahPendidikan: document.getElementById('formAyahPendidikan').value,
+        ayahPekerjaan: document.getElementById('formAyahPekerjaan').value,
+        ayahPenghasilan: document.getElementById('formAyahPenghasilan').value,
+        ayahKebutuhan: document.getElementById('formAyahKebutuhan').value,
+
+        namaIbu: document.getElementById('formIbuNama').value,
+        ibuNik: document.getElementById('formIbuNik').value,
+        ibuTahun: document.getElementById('formIbuTahun').value,
+        ibuPendidikan: document.getElementById('formIbuPendidikan').value,
+        ibuPekerjaan: document.getElementById('formIbuPekerjaan').value,
+        ibuPenghasilan: document.getElementById('formIbuPenghasilan').value,
+        ibuKebutuhan: document.getElementById('formIbuKebutuhan').value,
+
+        mempunyaiWali: document.getElementById('formMempunyaiWali').value,
+        namaWali: document.getElementById('formWaliNama').value,
+        waliNik: document.getElementById('formWaliNik').value,
+        waliTahun: document.getElementById('formWaliTahun').value,
+        waliPendidikan: document.getElementById('formWaliPendidikan').value,
+        waliPekerjaan: document.getElementById('formWaliPekerjaan').value,
+        waliPenghasilan: document.getElementById('formWaliPenghasilan').value,
+
+        telpRumah: document.getElementById('formTelpRumah').value,
+        noHp: document.getElementById('formNoHp').value,
+        email: document.getElementById('formEmail').value,
+        hobi: document.getElementById('formHobi').value,
+        citaCita: document.getElementById('formCitaCita').value
+      };
+
+      fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(res => res.json())
+      .then(res => {
+        btn.disabled = false; btn.innerText = "Kirim & Perbarui Database Sekolah";
+        const fa = document.getElementById('formAlert');
+        fa.className = "alert alert-success"; fa.innerText = res.message;
+        fa.classList.remove('hidden'); window.scrollTo(0, 0);
+      });
+    });
+
+    function logout() { location.reload(); }
+  </script>
+</body>
+</html>
