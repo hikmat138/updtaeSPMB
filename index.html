@@ -273,6 +273,7 @@
     let map, marker;
 
     // 1. Parser Konversi Tanggal dari Sheet (M/d/yyyy) ke Kotak Input HTML Date (yyyy-MM-dd)
+    // 1. Parser Konversi Tanggal Pintar (Mendukung format ISO dari Google Script)
     function parseTanggalKeForm(tglRaw) {
       const inputDate = document.getElementById('formTanggalLahir');
       const infoTeksBox = document.getElementById('infoTanggalTeks');
@@ -285,13 +286,24 @@
 
       let rawStr = String(tglRaw).trim();
 
-      // JIKA FORMAT DARI SHEET MENGGUNAKAN GARIS MIRING "/" (Format M/d/yyyy bawaan Google Sheets)
+      // KUNCI UTAMA: Jika formatnya ISO Date dari Google (contoh: 2016-07-12T17:00:00.000Z)
+      if (rawStr.includes("T")) {
+        // Ambil 10 karakter pertama saja yaitu "2016-07-12"
+        let cleanDate = rawStr.split("T")[0]; 
+        inputDate.value = cleanDate;
+        updateTeksFeedback(cleanDate);
+        return;
+      }
+
+      // JIKA FORMAT DARI SHEET MENGGUNAKAN GARIS MIRING "/" (Format M/d/yyyy)
       if (rawStr.includes("/")) {
         let parts = rawStr.split("/");
         if (parts.length === 3) {
-          let monthString = String(parts[0]).padStart(2, '0'); // Bulan (M)
-          let dayString   = String(parts[1]).padStart(2, '0'); // Hari (d)
-          let yearString  = parts[2];                          // Tahun (yyyy)
+          let monthString = String(parts[0]).padStart(2, '0'); // Bulan
+          let dayString   = String(parts[1]).padStart(2, '0'); // Hari
+          let yearString  = parts[2];                          // Tahun
+          
+          if (yearString.length === 2) yearString = "20" + yearString;
           
           inputDate.value = `${yearString}-${monthString}-${dayString}`;
           updateTeksFeedback(inputDate.value);
@@ -299,7 +311,7 @@
         }
       }
 
-      // JIKA FORMAT DARI SERVER SUDAH MENGGUNAKAN STRIP "-" (yyyy-MM-dd)
+      // JIKA FORMAT STRIP "-" BIASA (yyyy-MM-dd atau dd-MM-yyyy)
       if (rawStr.includes("-")) {
         let parts = rawStr.split("-");
         if (parts.length === 3) {
@@ -313,27 +325,35 @@
         }
       }
 
+      // Fallback jika tidak masuk kategori apa pun
       inputDate.value = rawStr;
       updateTeksFeedback(rawStr);
     }
 
-    // Fungsi pembantu memunculkan pratinjau teks Indonesia (Hari-Bulan-Tahun)
+    // 2. Fungsi pembantu memunculkan pratinjau teks Indonesia (Hari-Bulan-Tahun)
     function updateTeksFeedback(formattedVal) {
       const infoTeksBox = document.getElementById('infoTanggalTeks');
-      if (infoTeksBox && formattedVal && formattedVal.includes("-")) {
+      if (!infoTeksBox) return;
+
+      if (formattedVal && formattedVal.includes("-")) {
         const parts = formattedVal.split("-"); 
         if (parts.length === 3 && parts[0].length === 4) {
           const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
           let mIdx = parseInt(parts[1], 10) - 1;
           
           if (mIdx >= 0 && mIdx < 12) {
-            infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
+            // Menampilkan tanggal yang manis didengar (contoh: 12 Juli 2016)
+            infoTeksBox.innerHTML = `Terbaca di sistem: <span class="badge bg-success fs-6">${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}</span>`;
+            return;
           }
         }
       }
+      
+      // Jika data mentah tidak bisa di-parse, tampilkan apa adanya agar murid tahu isi datanya
+      infoTeksBox.innerHTML = `Terbaca di sistem: <span class="badge bg-warning text-dark fs-6">${formattedVal}</span>`;
     }
 
-    // Listener interaktif saat murid mengubah tanggal lahir secara manual
+    // 3. Listener interaktif saat murid mengubah tanggal lahir secara manual
     document.getElementById('formTanggalLahir').addEventListener('change', function() {
       updateTeksFeedback(this.value);
     });
