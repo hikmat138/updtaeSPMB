@@ -274,17 +274,35 @@
 
     // 1. Parser Konversi Tanggal dari Sheet (M/d/yyyy) ke Kotak Input HTML Date (yyyy-MM-dd)
     // 1. Parser Konversi Tanggal Pintar (Mendukung format ISO dari Google Script)
+    // 1. Parser Konversi Tanggal Pintar (Sudah Diperbaiki untuk Menjinakkan Format Teks Panjang)
     function parseTanggalKeForm(tglRaw) {
       const inputDate = document.getElementById('formTanggalLahir');
       const infoTeksBox = document.getElementById('infoTanggalTeks');
       
       if (!tglRaw) {
         inputDate.value = "";
-        if (infoTeksBox) infoTeksBox.innerText = "";
+        if (infoTeksBox) infoTeksBox.innerHTML = "";
         return;
       }
 
       let rawStr = String(tglRaw).trim();
+
+      // BARU & UTAMA: Jika mendeteksi format nama hari/bulan bahasa Inggris murni (Wed Jul 08...) atau kata "GMT"
+      if (rawStr.includes("GMT") || /^[A-Za-z]{3}\s[A-Za-z]{3}/.test(rawStr)) {
+        try {
+          let dateObj = new Date(rawStr);
+          if (!isNaN(dateObj.getTime())) {
+            let yyyy = dateObj.getFullYear();
+            let mm = String(dateObj.getMonth() + 1).padStart(2, '0'); // Bulan (01-12)
+            let dd = String(dateObj.getDate()).padStart(2, '0');        // Hari (01-31)
+            
+            let cleanDate = `${yyyy}-${mm}-${dd}`;
+            inputDate.value = cleanDate;
+            updateTeksFeedback(cleanDate);
+            return;
+          }
+        } catch (e) { console.error("Gagal parse format teks GMT", e); }
+      }
 
       // KUNCI UTAMA: Jika formatnya ISO Date dari Google (contoh: 2016-07-12T17:00:00.000Z)
       if (rawStr.includes("T")) {
@@ -342,8 +360,9 @@
           let mIdx = parseInt(parts[1], 10) - 1;
           
           if (mIdx >= 0 && mIdx < 12) {
-            // Menampilkan tanggal yang manis didengar (contoh: 12 Juli 2016)
-            infoTeksBox.innerHTML = `Terbaca di sistem: <span class="badge bg-success fs-6">${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}</span>`;
+            // Memastikan format tampilan hari selalu dua digit (misal: 08)
+            let hari = String(parseInt(parts[2], 10)).padStart(2, '0');
+            infoTeksBox.innerHTML = `Terbaca di sistem: <span class="badge bg-success fs-6">${hari} ${daftarBulan[mIdx]} ${parts[0]}</span>`;
             return;
           }
         }
