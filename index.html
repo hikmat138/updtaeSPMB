@@ -70,9 +70,10 @@
               <input type="text" class="form-control" id="formTempatLahir" required>
             </div>
             <div class="col-md-4">
-  <label class="form-label">Tanggal Lahir</label>
-  <input type="date" class="form-control" id="formTanggalLahir" required>
-</div>
+              <label class="form-label">Tanggal Lahir</label>
+              <input type="date" class="form-control" id="formTanggalLahir" required>
+              <small id="infoTanggalTeks" class="text-success fw-bold d-block mt-1"></small>
+            </div>
             <div class="col-md-6">
               <label class="form-label">No. Registrasi Akte Kelahiran</label>
               <input type="text" class="form-control" id="formAkte" required>
@@ -267,13 +268,57 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // GANTI DENGAN URL WEB APP DEPLOYMENT GOOGLE APPS SCRIPT ANDA
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzB3NQtBewMIBKUGHFDgVSOExVZEVOg5DuWrEsctoctvNFXNk0tFSlqltUrctA4rvIP/exec";
 
     let map, marker;
-    let localWilayah = {};
+    let daftarWilayahMurni = [];
 
-    // Inisialisasi Peta Default (Posisi Default Serang, Banten)
+    // Fungsi Pengolah Tanggal Lahir (M/d/yyyy ke yyyy-mm-dd) & Menampilkan Teks Panjang Indonesia
+    function parseTanggalKeForm(tglRaw) {
+      const infoTeksBox = document.getElementById('infoTanggalTeks');
+      const inputDate = document.getElementById('formTanggalLahir');
+      
+      if (tglRaw && tglRaw.includes("/")) {
+        let parts = tglRaw.split("/"); // [Bulan, Tanggal, Tahun]
+        if (parts.length === 3) {
+          let monthNum = parseInt(parts[0], 10);
+          let dayNum   = parseInt(parts[1], 10);
+          let yearNum  = parseInt(parts[2], 10);
+
+          let dayString   = String(dayNum).padStart(2, '0');
+          let monthString = String(monthNum).padStart(2, '0');
+          
+          // Mengisi value input date (yyyy-mm-dd)
+          inputDate.value = `${yearNum}-${monthString}-${dayString}`;
+
+          // Cetak Bulan Panjang Indonesia
+          const daftarBulan = [
+            "Agustus", "September", "Oktober", "November", "Desember",
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli"
+          ];
+          // Penyelarasan indeks array jika data opsi bulan bervariasi
+          const namaBulanIndo = daftarBulan[monthNum - 1] || monthString;
+          infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
+          return;
+        }
+      }
+      inputDate.value = tglRaw;
+      infoTeksBox.innerText = "";
+    }
+
+    // Pembaruan Teks Saat Input Kalender Diubah Manual Oleh Murid
+    document.getElementById('formTanggalLahir').addEventListener('change', function() {
+      const rawVal = this.value; // yyyy-mm-dd
+      const infoTeksBox = document.getElementById('infoTanggalTeks');
+      if(rawVal && rawVal.includes("-")) {
+        const parts = rawVal.split("-");
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let mIdx = parseInt(parts[1], 10) - 1;
+        infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
+      }
+    });
+
+    // Inisialisasi Peta Default
     function initMap(lat = -6.12, lng = 106.15) {
       if (!map) {
         map = L.map('map').setView([lat, lng], 13);
@@ -292,7 +337,6 @@
       document.getElementById('formBujur').value = lng;
     }
 
-    // Geolocation API Browser Otomatis
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(pos) {
@@ -301,7 +345,6 @@
       }
     }
 
-    // Pemilihan Jarak Kondisional
     function toggleJarakInput() {
       const val = document.getElementById('formJarakPilihan').value;
       const box = document.getElementById('jarakDetailBox');
@@ -314,7 +357,6 @@
       }
     }
 
-    // Kondisional Form Data Wali
     function toggleWaliSection() {
       const status = document.getElementById('formMempunyaiWali').value;
       const sec = document.getElementById('waliSection');
@@ -328,23 +370,81 @@
       }
     }
 
-    // FETCH API Wilayah Indonesia Publik Bebas Biaya
-    async function loadProvinsi(currentProv = "") {
+    // IMPLEMENTASI CASCADING WILAYAH INDONESIA
+    async function loadProvinsi(currentProv = "", currentKota = "", currentKec = "", currentDesa = "") {
       try {
-        let res = await fetch("https://status.dapodik.co/api/wilayah/provinsi"); // Contoh endpoint publik handal / alternatif binderbyte/kodewilayah
+        let res = await fetch("https://idn-area.v领.workers.dev/provinces"); // API Publik Gratis Wilayah Alternatif
         if(!res.ok) throw new Error();
         let data = await res.json();
         let html = '<option value="">Pilih Provinsi...</option>';
-        data.forEach(p => { html += `<option value="${p.nama}" data-id="${p.id}">${p.nama}</option>`; });
+        data.forEach(p => { html += `<option value="${p.name}" data-id="${p.id}">${p.name}</option>`; });
         document.getElementById('formProvinsi').innerHTML = html;
-        if(currentProv) document.getElementById('formProvinsi').value = currentProv;
+        
+        if(currentProv) {
+          document.getElementById('formProvinsi').value = currentProv;
+          await loadKabupaten(currentKota, currentKec, currentDesa);
+        }
       } catch {
-        // Fallback jika API Wilayah offline, diubah jadi text input biasa secara dinamis
-        document.getElementById('formProvinsi').outerHTML = `<input type="text" class="form-control" id="formProvinsi" value="${currentProv}" required>`;
+        // Fallback jika API Wilayah Offline, ganti menjadi Input Text biasa
+        ["formProvinsi", "formKota", "formKecamatan", "formDesa"].forEach(id => {
+          let val = id === "formProvinsi" ? currentProv : id === "formKota" ? currentKota : id === "formKecamatan" ? currentKec : currentDesa;
+          document.getElementById(id).outerHTML = `<input type="text" class="form-control" id="${id}" value="${val}" required>`;
+        });
       }
     }
 
-    // Logic Login & Tarik Opsi Dropdown Dinamis
+    async function loadKabupaten(targetKota = "", targetKec = "", targetDesa = "") {
+      const provEl = document.getElementById('formProvinsi');
+      const selected = provEl.options[provEl.selectedIndex];
+      if(!selected || !selected.value) return;
+      const provId = selected.getAttribute('data-id');
+
+      let res = await fetch(`https://idn-area.v领.workers.dev/regencies/${provId}`);
+      let data = await res.json();
+      let html = '<option value="">Pilih Kota/Kab...</option>';
+      data.forEach(r => { html += `<option value="${r.name}" data-id="${r.id}">${r.name}</option>`; });
+      document.getElementById('formKota').innerHTML = html;
+      
+      if(targetKota) {
+        document.getElementById('formKota').value = targetKota;
+        await loadKecamatan(targetKec, targetDesa);
+      }
+    }
+
+    async function loadKecamatan(targetKec = "", targetDesa = "") {
+      const kotaEl = document.getElementById('formKota');
+      const selected = kotaEl.options[kotaEl.selectedIndex];
+      if(!selected || !selected.value) return;
+      const kotaId = selected.getAttribute('data-id');
+
+      let res = await fetch(`https://idn-area.v领.workers.dev/districts/${kotaId}`);
+      let data = await res.json();
+      let html = '<option value="">Pilih Kecamatan...</option>';
+      data.forEach(d => { html += `<option value="${d.name}" data-id="${d.id}">${d.name}</option>`; });
+      document.getElementById('formKecamatan').innerHTML = html;
+
+      if(targetKec) {
+        document.getElementById('formKecamatan').value = targetKec;
+        await loadDesa(targetDesa);
+      }
+    }
+
+    async function loadDesa(targetDesa = "") {
+      const kecEl = document.getElementById('formKecamatan');
+      const selected = kecEl.options[kecEl.selectedIndex];
+      if(!selected || !selected.value) return;
+      const kecId = selected.getAttribute('data-id');
+
+      let res = await fetch(`https://idn-area.v领.workers.dev/villages/${kecId}`);
+      let data = await res.json();
+      let html = '<option value="">Pilih Desa/Kelurahan...</option>';
+      data.forEach(v => { html += `<option value="${v.name}">${v.name}</option>`; });
+      document.getElementById('formDesa').innerHTML = html;
+
+      if(targetDesa) document.getElementById('formDesa').value = targetDesa;
+    }
+
+    // Handler Login Sistem
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const nis = document.getElementById('nisInput').value;
@@ -360,7 +460,6 @@
           document.getElementById('loginSection').classList.add('hidden');
           document.getElementById('formSection').classList.remove('hidden');
           
-          // Mengisi semua parameter element form
           const d = res.data;
           document.getElementById('studentRow').value = d.row;
           document.getElementById('formNama').value = d.nama;
@@ -368,7 +467,6 @@
           document.getElementById('formNik').value = d.nik;
           document.getElementById('formKk').value = d.kk;
           document.getElementById('formTempatLahir').value = d.tempatLahir;
-          document.getElementById('formTanggalLahir').value = d.tanggalLahir;
           document.getElementById('formAkte').value = d.noAkte;
           document.getElementById('formAnakKe').value = d.anakKe;
           document.getElementById('formJumlahSaudara').value = d.jumlahSaudara;
@@ -379,17 +477,10 @@
           document.getElementById('formRw').value = d.rw;
           document.getElementById('formDusun').value = d.dusun;
           document.getElementById('formKodePos').value = d.kodePos;
-          // Konversi dd-mm-yyyy dari Sheets ke yyyy-mm-dd untuk <input type="date">
-if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
-  const parts = d.tanggalLahir.split("-"); // [dd, mm, yyyy]
-  if (parts.length === 3) {
-    const dateForInput = `${parts[2]}-${parts[1]}-${parts[0]}`; // yyyy-mm-dd
-    document.getElementById('formTanggalLahir').value = dateForInput;
-  }
-} else {
-  document.getElementById('formTanggalLahir').value = d.tanggalLahir;
-}
-          // Olah Waktu Tempuh Terpisah (Jam/Menit)
+          
+          // Jalankan pengolahan konversi tanggal lahir
+          parseTanggalKeForm(d.tanggalLahir);
+
           if(d.waktuTempuh && String(d.waktuTempuh).includes("Jam")) {
             let parts = String(d.waktuTempuh).split(" ");
             document.getElementById('waktuJam').value = parts[0] || 0;
@@ -399,7 +490,6 @@ if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
             document.getElementById('waktuJam').value = 0;
           }
 
-          // Olah Jarak Sekolah
           if (d.jarakSekolah && String(d.jarakSekolah).includes("Lebih")) {
             document.getElementById('formJarakPilihan').value = "Lebih dari 1 KM";
             document.getElementById('jarakDetailBox').classList.remove('hidden');
@@ -408,7 +498,6 @@ if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
             document.getElementById('formJarakPilihan').value = d.jarakSekolah || "Kurang dari 1 KM";
           }
 
-          // Orang Tua Ayah & Ibu & Wali
           document.getElementById('formAyahNama').value = d.namaAyah;
           document.getElementById('formAyahNik').value = d.ayahNik;
           document.getElementById('formAyahTahun').value = d.ayahTahun;
@@ -426,7 +515,6 @@ if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
           document.getElementById('formNoHp').value = d.noHp;
           document.getElementById('formEmail').value = d.email;
 
-          // Isi Semua Dropdown dari Sheet DATA OPSI
           const fillSelect = (id, options, currentVal) => {
             let el = document.getElementById(id);
             el.innerHTML = '<option value="">Pilih...</option>';
@@ -440,57 +528,57 @@ if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
           fillSelect('formHobi', res.opsi.hobi, d.hobi);
           fillSelect('formCitaCita', res.opsi.citaCita, d.citaCita);
           
-          // Dropdown Ayah
           fillSelect('formAyahPendidikan', res.opsi.pendidikan, d.ayahPendidikan);
           fillSelect('formAyahPekerjaan', res.opsi.pekerjaan, d.ayahPekerjaan);
           fillSelect('formAyahPenghasilan', res.opsi.penghasilan, d.ayahPenghasilan);
           fillSelect('formAyahKebutuhan', res.opsi.kebutuhan, d.ayahKebutuhan);
 
-          // Dropdown Ibu
           fillSelect('formIbuPendidikan', res.opsi.pendidikan, d.ibuPendidikan);
           fillSelect('formIbuPekerjaan', res.opsi.pekerjaan, d.ibuPekerjaan);
           fillSelect('formIbuPenghasilan', res.opsi.penghasilan, d.ibuPenghasilan);
           fillSelect('formIbuKebutuhan', res.opsi.kebutuhan, d.ibuKebutuhan);
 
-          // Dropdown Wali
           fillSelect('formWaliPendidikan', res.opsi.pendidikan, d.waliPendidikan);
           fillSelect('formWaliPekerjaan', res.opsi.pekerjaan, d.waliPekerjaan);
           fillSelect('formWaliPenghasilan', res.opsi.penghasilan, d.waliPenghasilan);
 
-          // Peta Muat Koordinat
           let centerLat = parseFloat(d.lintang) || -6.12;
           let centerLng = parseFloat(d.bujur) || 106.15;
           setTimeout(() => { initMap(centerLat, centerLng); }, 300);
 
-          // Muat data wilayah
-          loadProvinsi(d.provinsi);
+          // Panggil fungsi pembuat wilayah bertingkat
+          loadProvinsi(d.provinsi, d.kota, d.kecamatan, d.desa);
         } else {
           alertBox.innerText = res.message; alertBox.classList.remove('hidden');
         }
       }).catch(() => { btn.disabled = false; alert("Kendala Jaringan Web App."); });
     });
 
-    // KIRIM UPDATE DATA
+    // Handler Kirim Update Data
     document.getElementById('siswaForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSimpan');
       btn.disabled = true; btn.innerText = "Menyimpan ke Sheet...";
 
-      // Kembalikan susunan text waktu tempuh dan jarak sekolah
       let jarakFinal = document.getElementById('formJarakPilihan').value;
       if(jarakFinal === "Lebih dari 1 KM") jarakFinal = document.getElementById('formJarakDetail').value;
 
       let waktuFinal = document.getElementById('waktuJam').value + " Jam " + document.getElementById('waktuMenit').value + " Menit";
 
-      const rawDate = document.getElementById('formTanggalLahir').value; // Hasilnya yyyy-mm-dd
-let dateForSheets = rawDate;
+      // Kembalikan format tanggal ke Bulan/Tanggal/Tahun (M/d/yyyy) sesuai kebutuhan Google Sheets
+      const rawDate = document.getElementById('formTanggalLahir').value; // yyyy-mm-dd
+      let dateForSheets = rawDate;
 
-if (rawDate && rawDate.includes("-")) {
-  const parts = rawDate.split("-"); // [yyyy, mm, dd]
-  if (parts.length === 3) {
-    dateForSheets = `${parts[2]}-${parts[1]}-${parts[0]}`; // Ubah ke dd-mm-yyyy
-  }
-}
+      if (rawDate && rawDate.includes("-")) {
+        const parts = rawDate.split("-"); // [yyyy, mm, dd]
+        if (parts.length === 3) {
+          let y = parts[0];
+          let m = parseInt(parts[1], 10); // Hilangkan angka nol di depan (08 -> 8)
+          let d = parseInt(parts[2], 10);
+          dateForSheets = `${m}/${d}/${y}`;
+        }
+      }
+
       const payload = {
         action: 'update',
         row: document.getElementById('studentRow').value,
@@ -499,7 +587,7 @@ if (rawDate && rawDate.includes("-")) {
         nik: document.getElementById('formNik').value,
         kk: document.getElementById('formKk').value,
         tempatLahir: document.getElementById('formTempatLahir').value,
-        tanggalLahir: dateForSheets,
+        tanggalLahir: dateForSheets, // Mengirim format string M/d/yyyy
         noAkte: document.getElementById('formAkte').value,
         kebutuhanKhusus: document.getElementById('formKebutuhan').value,
         agama: document.getElementById('formAgama').value,
@@ -523,7 +611,6 @@ if (rawDate && rawDate.includes("-")) {
         lintang: document.getElementById('formLintang').value,
         bujur: document.getElementById('formBujur').value,
         
-        // Orang Tua
         namaAyah: document.getElementById('formAyahNama').value,
         ayahNik: document.getElementById('formAyahNik').value,
         ayahTahun: document.getElementById('formAyahTahun').value,
@@ -564,6 +651,7 @@ if (rawDate && rawDate.includes("-")) {
         fa.classList.remove('hidden'); window.scrollTo(0, 0);
       });
     });
+
     function logout() { location.reload(); }
   </script>
 </body>
