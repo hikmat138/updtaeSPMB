@@ -275,37 +275,66 @@
 
     // Fungsi Pengolah Tanggal Lahir (M/d/yyyy ke yyyy-mm-dd) & Menampilkan Teks Panjang Indonesia
     function parseTanggalKeForm(tglRaw) {
-      const infoTeksBox = document.getElementById('infoTanggalTeks');
-      const inputDate = document.getElementById('formTanggalLahir');
+  const infoTeksBox = document.getElementById('infoTanggalTeks');
+  const inputDate = document.getElementById('formTanggalLahir');
+  
+  if (!tglRaw) {
+    inputDate.value = "";
+    if (infoTeksBox) infoTeksBox.innerText = "";
+    return;
+  }
+
+  // Daftar bulan Indonesia yang BENAR (Urut dari Januari - Desember)
+  const daftarBulan = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  // KONDISI 1: Jika data dari .gs masuk sebagai format "M/D/YYYY" (Contoh: "7/12/2019")
+  if (String(tglRaw).includes("/")) {
+    let parts = tglRaw.split("/"); // [Bulan, Tanggal, Tahun]
+    if (parts.length === 3) {
+      let monthNum = parseInt(parts[0], 10);
+      let dayNum   = parseInt(parts[1], 10);
+      let yearNum  = parseInt(parts[2], 10);
+
+      let dayString   = String(dayNum).padStart(2, '0');
+      let monthString = String(monthNum).padStart(2, '0');
       
-      if (tglRaw && tglRaw.includes("/")) {
-        let parts = tglRaw.split("/"); // [Bulan, Tanggal, Tahun]
-        if (parts.length === 3) {
-          let monthNum = parseInt(parts[0], 10);
-          let dayNum   = parseInt(parts[1], 10);
-          let yearNum  = parseInt(parts[2], 10);
+      // Mengisi value input date dengan format standar wajib (yyyy-mm-dd)
+      inputDate.value = `${yearNum}-${monthString}-${dayString}`;
 
-          let dayString   = String(dayNum).padStart(2, '0');
-          let monthString = String(monthNum).padStart(2, '0');
-          
-          // Mengisi value input date (yyyy-mm-dd)
-          inputDate.value = `${yearNum}-${monthString}-${dayString}`;
-
-          // Cetak Bulan Panjang Indonesia
-          const daftarBulan = [
-            "Agustus", "September", "Oktober", "November", "Desember",
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli"
-          ];
-          // Penyelarasan indeks array jika data opsi bulan bervariasi
-          const namaBulanIndo = daftarBulan[monthNum - 1] || monthString;
-          infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
-          return;
-        }
+      // Ambil nama bulan yang benar berdasarkan indeks (Bulan 1 = indeks 0)
+      const namaBulanIndo = daftarBulan[monthNum - 1] || monthString;
+      if (infoTeksBox) {
+        infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
       }
-      inputDate.value = tglRaw;
-      infoTeksBox.innerText = "";
+      return;
     }
+  }
 
+  // KONDISI 2: Jika data dari .gs sudah berupa format "YYYY-MM-DD" (Contoh: "2019-07-12")
+  if (String(tglRaw).includes("-")) {
+    let parts = tglRaw.split("-"); // [Tahun, Bulan, Tanggal]
+    if (parts.length === 3) {
+      let yearNum  = parseInt(parts[0], 10);
+      let monthNum = parseInt(parts[1], 10);
+      let dayNum   = parseInt(parts[2], 10);
+
+      inputDate.value = tglRaw; // Langsung masukkan karena sudah pas formatnya
+
+      const namaBulanIndo = daftarBulan[monthNum - 1] || parts[1];
+      if (infoTeksBox) {
+        infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
+      }
+      return;
+    }
+  }
+  
+  // Kondisi cadangan jika format teks lainnya
+  inputDate.value = tglRaw;
+  if (infoTeksBox) infoTeksBox.innerText = "";
+}
     // Pembaruan Teks Saat Input Kalender Diubah Manual Oleh Murid
     document.getElementById('formTanggalLahir').addEventListener('change', function() {
       const rawVal = this.value; // yyyy-mm-dd
