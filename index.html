@@ -71,8 +71,8 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Tanggal Lahir</label>
-              <input type="date" class="form-control" id="formTanggalLahir">
-              <small id="infoTanggalTeks" class="text-success fw-bold d-block mt-1"></small>
+              <input type="date" id="formTanggalLahir" class="form-control">
+<small id="infoTanggalTeks" class="text-success fw-bold"></small>
             </div>
             <div class="col-md-6">
               <label class="form-label">No. Registrasi Akte Kelahiran</label>
@@ -283,64 +283,65 @@
     return;
   }
 
-  // Jika data dari server sudah berformat yyyy-MM-dd (Hasil olahan code.gs yang baru)
-  let formattedDate = "";
-  let tglStr = String(tglRaw).trim();
+  let rawStr = String(tglRaw).trim();
 
-  if (tglStr.includes("-")) {
-    let parts = tglStr.split("-");
-    if (parts[0].length === 4) {
-      // Format sudah yyyy-mm-dd (Sesuai output standar code.gs)
-      formattedDate = tglStr;
-    } else if (parts[0].length === 2) {
-      // Antisipasi jika dari server terbawa dd-mm-yyyy
-      formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-    }
-  } else if (tglStr.includes("/")) {
-    // Antisipasi jika dari server terbawa mm/dd/yyyy atau dd/mm/yyyy
-    let parts = tglStr.split("/");
+  // JIKA FORMAT DARI SHEET MENGGUNAKAN GARIS MIRING "/" (Format M/d/yyyy seperti di gambar)
+  if (rawStr.includes("/")) {
+    let parts = rawStr.split("/");
     if (parts.length === 3) {
-      let part0 = parts[0].padStart(2, '0');
-      let part1 = parts[1].padStart(2, '0');
-      let part2 = parts[2];
-      // Jika tahun ada di depan
-      if (part2.length === 4) {
-        formattedDate = `${part2}-${part0}-${part1}`;
-      } else {
-        formattedDate = `${part2}-${part1}-${part0}`;
-      }
+      // BERDASARKAN DATABASE: parts[0] adalah Bulan, parts[1] adalah Hari
+      let monthString = String(parts[0]).padStart(2, '0'); // Bulan (M)
+      let dayString   = String(parts[1]).padStart(2, '0'); // Hari (d)
+      let yearString  = parts[2];                          // Tahun (yyyy)
+      
+      // Standar input type="date" HTML WAJIB: yyyy-MM-dd (Tahun-Bulan-Hari)
+      inputDate.value = `${yearString}-${monthString}-${dayString}`;
+      
+      // Jalankan teks feedback bahasa Indonesia secara sinkron
+      updateTeksFeedback(inputDate.value);
+      return;
     }
   }
 
-  // Jika gagal mendeteksi struktur pola di atas, masukkan apa adanya
-  if (!formattedDate) {
-    formattedDate = tglStr;
+  // JIKA FORMAT DARI SERVER SUDAH MENGGUNAKAN STRIP "-" (yyyy-MM-dd)
+  if (rawStr.includes("-")) {
+    let parts = rawStr.split("-");
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        // Sudah berformat yyyy-mm-dd
+        inputDate.value = rawStr;
+      } else if (parts[0].length === 2) {
+        // Antisipasi jika terbalik dd-mm-yyyy
+        inputDate.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+      }
+      updateTeksFeedback(inputDate.value);
+      return;
+    }
   }
 
-  // Set nilai ke dalam input date HTML
-  inputDate.value = formattedDate;
-
-  // PENTING: Picu fungsi teks feedback secara manual agar langsung terbaca teks Indonesianya
-  updateTeksFeedback(formattedDate);
+  // Jika tidak masuk kondisi di atas, masukkan apa adanya
+  inputDate.value = rawStr;
+  updateTeksFeedback(rawStr);
 }
 
-// Fungsi terpisah untuk membuat teks deskripsi tanggal bahasa Indonesia
-function updateTeksFeedback(rawVal) {
+// Fungsi pembantu untuk memunculkan teks pratinjau Indonesia (Hari-Bulan-Tahun)
+function updateTeksFeedback(formattedVal) {
   const infoTeksBox = document.getElementById('infoTanggalTeks');
-  if (infoTeksBox && rawVal && rawVal.includes("-")) {
-    const parts = rawVal.split("-");
-    if (parts.length === 3 && parts[0].length === 4) { // Memastikan format yyyy-mm-dd
+  if (infoTeksBox && formattedVal && formattedVal.includes("-")) {
+    const parts = formattedVal.split("-"); // memotong yyyy-mm-dd
+    if (parts.length === 3 && parts[0].length === 4) {
       const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
       let mIdx = parseInt(parts[1], 10) - 1;
       
       if (mIdx >= 0 && mIdx < 12) {
+        // Menampilkan teks pratinjau: Hari + Nama Bulan + Tahun
         infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
       }
     }
   }
 }
 
-// Listener tetap dipertahankan jika murid mengubah tanggal secara manual via browser
+// Listener pelengkap agar pratinjau tetap berjalan interaktif saat murid mengubah manual
 document.getElementById('formTanggalLahir').addEventListener('change', function() {
   updateTeksFeedback(this.value);
 });
