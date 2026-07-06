@@ -282,12 +282,6 @@
     return;
   }
 
-  // Daftar bulan Indonesia yang BENAR (Urut dari Januari - Desember)
-  const daftarBulan = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
-
   // KONDISI 1: Jika data dari .gs masuk sebagai format "M/D/YYYY" (Contoh: "7/12/2019")
   if (String(tglRaw).includes("/")) {
     let parts = tglRaw.split("/"); // [Bulan, Tanggal, Tahun]
@@ -305,7 +299,7 @@
     }
   }
 
-  // KONDISI 2: Jika data dari .gs sudah berupa format "YYYY-MM-DD" (Contoh: "2019-07-12")
+  // KONDISI 2: Jika data dari .gs sudah berupa format "YYYY-MM-DD" atau "DD-MM-YYYY"
   if (String(tglRaw).includes("-")) {
     let parts = tglRaw.split("-");
     // Jika ternyata formatnya dd-mm-yyyy (3 bagian terbalik)
@@ -320,22 +314,29 @@
     }
     return;
   }
-    
+  
   // Kondisi cadangan jika format teks lainnya
   inputDate.value = tglRaw;
-  if (infoTeksBox) infoTeksBox.innerText = "";
 }
-    // Pembaruan Teks Saat Input Kalender Diubah Manual Oleh Murid
-    document.getElementById('formTanggalLahir').addEventListener('change', function() {
-      const rawVal = this.value; // yyyy-mm-dd
-      const infoTeksBox = document.getElementById('infoTanggalTeks');
-      if(rawVal && rawVal.includes("-")) {
-        const parts = rawVal.split("-");
-        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        let mIdx = parseInt(parts[1], 10) - 1;
-        infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
-      }
-    });
+
+// Event Listener Saat Input Kalender Diubah Manual Oleh Murid
+document.getElementById('formTanggalLahir').addEventListener('change', function() {
+  const rawVal = this.value; // yyyy-mm-dd
+  const infoTeksBox = document.getElementById('infoTanggalTeks');
+  
+  // Pastikan elemen infoTanggalTeks ada di HTML sebelum mengubah teksnya
+  if (infoTeksBox && rawVal && rawVal.includes("-")) {
+    const parts = rawVal.split("-"); // [Tahun, Bulan, Tanggal]
+    const daftarBulan = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    let mIdx = parseInt(parts[1], 10) - 1;
+    
+    // Menampilkan info teks hanya saat diubah manual oleh murid
+    infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
+  }
+});
 
     // Inisialisasi Peta Default
     function initMap(lat = -6.12, lng = 106.15) {
