@@ -274,48 +274,76 @@
 
     // Parser Konversi Tanggal dari Sheet (M/d/yyyy atau string lain) ke kotak Input HTML Date
     function parseTanggalKeForm(tglRaw) {
-      const inputDate = document.getElementById('formTanggalLahir');
-      if (!tglRaw) {
-        inputDate.value = "";
-        return;
-      }
+  const inputDate = document.getElementById('formTanggalLahir');
+  const infoTeksBox = document.getElementById('infoTanggalTeks');
+  
+  if (!tglRaw) {
+    inputDate.value = "";
+    if (infoTeksBox) infoTeksBox.innerText = "";
+    return;
+  }
 
-      // Jika data dari sheet formatnya menggunakan "/" (M/d/yyyy)
-      if (String(tglRaw).includes("/")) {
-        let parts = tglRaw.split("/");
-        if (parts.length === 3) {
-          let monthString = String(parts[0]).padStart(2, '0');
-          let dayString   = String(parts[1]).padStart(2, '0');
-          let yearString  = parts[2];
-          inputDate.value = `${yearString}-${monthString}-${dayString}`;
-          return;
-        }
-      }
+  // Jika data dari server sudah berformat yyyy-MM-dd (Hasil olahan code.gs yang baru)
+  let formattedDate = "";
+  let tglStr = String(tglRaw).trim();
 
-      // Jika data dari sheet formatnya menggunakan "-"
-      if (String(tglRaw).includes("-")) {
-        let parts = tglRaw.split("-");
-        if (parts.length === 3 && parts[0].length === 2) { // dd-mm-yyyy terbalik
-          inputDate.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-        } else {
-          inputDate.value = tglRaw; // yyyy-mm-dd
-        }
-        return;
-      }
-      inputDate.value = tglRaw;
+  if (tglStr.includes("-")) {
+    let parts = tglStr.split("-");
+    if (parts[0].length === 4) {
+      // Format sudah yyyy-mm-dd (Sesuai output standar code.gs)
+      formattedDate = tglStr;
+    } else if (parts[0].length === 2) {
+      // Antisipasi jika dari server terbawa dd-mm-yyyy
+      formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
+  } else if (tglStr.includes("/")) {
+    // Antisipasi jika dari server terbawa mm/dd/yyyy atau dd/mm/yyyy
+    let parts = tglStr.split("/");
+    if (parts.length === 3) {
+      let part0 = parts[0].padStart(2, '0');
+      let part1 = parts[1].padStart(2, '0');
+      let part2 = parts[2];
+      // Jika tahun ada di depan
+      if (part2.length === 4) {
+        formattedDate = `${part2}-${part0}-${part1}`;
+      } else {
+        formattedDate = `${part2}-${part1}-${part0}`;
+      }
+    }
+  }
 
-    // Teks Feedback berjalan saat diganti manual
-    document.getElementById('formTanggalLahir').addEventListener('change', function() {
-      const rawVal = this.value;
-      const infoTeksBox = document.getElementById('infoTanggalTeks');
-      if (infoTeksBox && rawVal && rawVal.includes("-")) {
-        const parts = rawVal.split("-");
-        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        let mIdx = parseInt(parts[1], 10) - 1;
+  // Jika gagal mendeteksi struktur pola di atas, masukkan apa adanya
+  if (!formattedDate) {
+    formattedDate = tglStr;
+  }
+
+  // Set nilai ke dalam input date HTML
+  inputDate.value = formattedDate;
+
+  // PENTING: Picu fungsi teks feedback secara manual agar langsung terbaca teks Indonesianya
+  updateTeksFeedback(formattedDate);
+}
+
+// Fungsi terpisah untuk membuat teks deskripsi tanggal bahasa Indonesia
+function updateTeksFeedback(rawVal) {
+  const infoTeksBox = document.getElementById('infoTanggalTeks');
+  if (infoTeksBox && rawVal && rawVal.includes("-")) {
+    const parts = rawVal.split("-");
+    if (parts.length === 3 && parts[0].length === 4) { // Memastikan format yyyy-mm-dd
+      const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      let mIdx = parseInt(parts[1], 10) - 1;
+      
+      if (mIdx >= 0 && mIdx < 12) {
         infoTeksBox.innerText = `Terbaca di sistem: ${parseInt(parts[2], 10)} ${daftarBulan[mIdx]} ${parts[0]}`;
       }
-    });
+    }
+  }
+}
+
+// Listener tetap dipertahankan jika murid mengubah tanggal secara manual via browser
+document.getElementById('formTanggalLahir').addEventListener('change', function() {
+  updateTeksFeedback(this.value);
+});
 
     // Inisialisasi Peta
     function initMap(lat = -6.12, lng = 106.15) {
