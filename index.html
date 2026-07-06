@@ -275,12 +275,10 @@
 
     // Fungsi Pengolah Tanggal Lahir (M/d/yyyy ke yyyy-mm-dd) & Menampilkan Teks Panjang Indonesia
     function parseTanggalKeForm(tglRaw) {
-  const infoTeksBox = document.getElementById('infoTanggalTeks');
   const inputDate = document.getElementById('formTanggalLahir');
   
   if (!tglRaw) {
     inputDate.value = "";
-    if (infoTeksBox) infoTeksBox.innerText = "";
     return;
   }
 
@@ -301,35 +299,29 @@
       let dayString   = String(dayNum).padStart(2, '0');
       let monthString = String(monthNum).padStart(2, '0');
       
-      // Mengisi value input date dengan format standar wajib (yyyy-mm-dd)
+      // Masukkan langsung ke dalam kotak input dengan format standar wajib (yyyy-mm-dd)
       inputDate.value = `${yearNum}-${monthString}-${dayString}`;
-
-      // Ambil nama bulan yang benar berdasarkan indeks (Bulan 1 = indeks 0)
-      const namaBulanIndo = daftarBulan[monthNum - 1] || monthString;
-      if (infoTeksBox) {
-        infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
-      }
       return;
     }
   }
 
   // KONDISI 2: Jika data dari .gs sudah berupa format "YYYY-MM-DD" (Contoh: "2019-07-12")
   if (String(tglRaw).includes("-")) {
-    let parts = tglRaw.split("-"); // [Tahun, Bulan, Tanggal]
-    if (parts.length === 3) {
-      let yearNum  = parseInt(parts[0], 10);
-      let monthNum = parseInt(parts[1], 10);
-      let dayNum   = parseInt(parts[2], 10);
-
-      inputDate.value = tglRaw; // Langsung masukkan karena sudah pas formatnya
-
-      const namaBulanIndo = daftarBulan[monthNum - 1] || parts[1];
-      if (infoTeksBox) {
-        infoTeksBox.innerText = `Terbaca di sistem: ${dayNum} ${namaBulanIndo} ${yearNum}`;
-      }
-      return;
+    let parts = tglRaw.split("-");
+    // Jika ternyata formatnya dd-mm-yyyy (3 bagian terbalik)
+    if (parts.length === 3 && parts[0].length === 2) {
+      let dayString   = parts[0].padStart(2, '0');
+      let monthString = parts[1].padStart(2, '0');
+      let yearString  = parts[2];
+      inputDate.value = `${yearString}-${monthString}-${dayString}`;
+    } else {
+      // Jika sudah yyyy-mm-dd, langsung masukkan ke kotak input
+      inputDate.value = tglRaw;
     }
+    return;
   }
+    }
+  
   
   // Kondisi cadangan jika format teks lainnya
   inputDate.value = tglRaw;
