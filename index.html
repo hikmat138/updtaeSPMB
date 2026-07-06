@@ -70,9 +70,9 @@
               <input type="text" class="form-control" id="formTempatLahir" required>
             </div>
             <div class="col-md-4">
-              <label class="form-label">Tanggal Lahir (DD-MM-YYYY)</label>
-              <input type="text" class="form-control" id="formTanggalLahir" placeholder="Contoh: 09-08-2016" required>
-            </div>
+  <label class="form-label">Tanggal Lahir</label>
+  <input type="date" class="form-control" id="formTanggalLahir" required>
+</div>
             <div class="col-md-6">
               <label class="form-label">No. Registrasi Akte Kelahiran</label>
               <input type="text" class="form-control" id="formAkte" required>
@@ -379,7 +379,16 @@
           document.getElementById('formRw').value = d.rw;
           document.getElementById('formDusun').value = d.dusun;
           document.getElementById('formKodePos').value = d.kodePos;
-          
+          // Konversi dd-mm-yyyy dari Sheets ke yyyy-mm-dd untuk <input type="date">
+if (d.tanggalLahir && d.tanggalLahir.includes("-")) {
+  const parts = d.tanggalLahir.split("-"); // [dd, mm, yyyy]
+  if (parts.length === 3) {
+    const dateForInput = `${parts[2]}-${parts[1]}-${parts[0]}`; // yyyy-mm-dd
+    document.getElementById('formTanggalLahir').value = dateForInput;
+  }
+} else {
+  document.getElementById('formTanggalLahir').value = d.tanggalLahir;
+}
           // Olah Waktu Tempuh Terpisah (Jam/Menit)
           if(d.waktuTempuh && String(d.waktuTempuh).includes("Jam")) {
             let parts = String(d.waktuTempuh).split(" ");
@@ -473,6 +482,15 @@
 
       let waktuFinal = document.getElementById('waktuJam').value + " Jam " + document.getElementById('waktuMenit').value + " Menit";
 
+      const rawDate = document.getElementById('formTanggalLahir').value; // Hasilnya yyyy-mm-dd
+let dateForSheets = rawDate;
+
+if (rawDate && rawDate.includes("-")) {
+  const parts = rawDate.split("-"); // [yyyy, mm, dd]
+  if (parts.length === 3) {
+    dateForSheets = `${parts[2]}-${parts[1]}-${parts[0]}`; // Ubah ke dd-mm-yyyy
+  }
+}
       const payload = {
         action: 'update',
         row: document.getElementById('studentRow').value,
@@ -481,7 +499,7 @@
         nik: document.getElementById('formNik').value,
         kk: document.getElementById('formKk').value,
         tempatLahir: document.getElementById('formTempatLahir').value,
-        tanggalLahir: document.getElementById('formTanggalLahir').value,
+        tanggalLahir: dateForSheets,
         noAkte: document.getElementById('formAkte').value,
         kebutuhanKhusus: document.getElementById('formKebutuhan').value,
         agama: document.getElementById('formAgama').value,
